@@ -22,11 +22,29 @@ pub fn analyze_password(input: &str) -> u32 {
     for line in input.lines() {
         let (direction, distance) = line.split_at(1);
         let distance: u32 = distance.parse().unwrap();
-        match direction {
-            "L" => pos = rotate_left(pos, distance),
-            "R" => pos = rotate_right(pos, distance),
+        pos = match direction {
+            "L" => rotate_left(pos, distance),
+            "R" => rotate_right(pos, distance),
             _ => panic!("Invalid direction"),
+        };
+        if pos == 0 {
+            zero_count += 1;
         }
+    }
+    zero_count
+}
+
+pub fn analyze_password_0x434c49434b(input: &str) -> u32 {
+    let mut zero_count = 0u32;
+    let mut pos = 50;
+    for line in input.lines() {
+        let (direction, distance) = line.split_at(1);
+        let distance: u32 = distance.parse().unwrap();
+        pos = match direction {
+            "L" => rotate_left(pos, distance),
+            "R" => rotate_right(pos, distance),
+            _ => panic!("Invalid direction"),
+        };
         if pos == 0 {
             zero_count += 1;
         }
@@ -58,5 +76,10 @@ mod tests {
     #[test]
     fn test_analyze_password() {
         assert_eq!(analyze_password(EXAMPLE_INPUT), 3);
+    }
+
+    #[test]
+    fn test_analyze_password_0x434c49434b() {
+        assert_eq!(analyze_password_0x434c49434b(EXAMPLE_INPUT), 6);
     }
 }
