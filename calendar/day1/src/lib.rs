@@ -1,55 +1,34 @@
-pub fn rotate_left(pos: u32, steps: u32) -> u32 {
-    let steps = steps % 100;
-    if steps > pos {
-        100 - (steps - pos)
-    } else {
-        pos - steps
-    }
+pub fn analyze_password(input: &str) -> i16 {
+    input
+        .lines()
+        .fold((50, 0), |(pos, count), line| {
+            let (direction, distance) = line.split_at(1);
+            let mut distance: i16 = distance.parse().unwrap();
+            if direction == "L" {
+                distance *= -1;
+            }
+            let pos = (pos + distance).rem_euclid(100);
+            (pos, count + (pos == 0) as i16)
+        })
+        .1
 }
 
-pub fn rotate_right(pos: u32, steps: u32) -> u32 {
-    let steps = steps % 100;
-    if steps >= 100 - pos {
-        steps - (100 - pos)
-    } else {
-        pos + steps
-    }
-}
-
-pub fn analyze_password(input: &str) -> u32 {
-    let mut zero_count = 0u32;
-    let mut pos = 50;
-    for line in input.lines() {
-        let (direction, distance) = line.split_at(1);
-        let distance: u32 = distance.parse().unwrap();
-        pos = match direction {
-            "L" => rotate_left(pos, distance),
-            "R" => rotate_right(pos, distance),
-            _ => panic!("Invalid direction"),
-        };
-        if pos == 0 {
-            zero_count += 1;
-        }
-    }
-    zero_count
-}
-
-pub fn analyze_password_0x434c49434b(input: &str) -> u32 {
-    let mut zero_count = 0u32;
-    let mut pos = 50;
-    for line in input.lines() {
-        let (direction, distance) = line.split_at(1);
-        let distance: u32 = distance.parse().unwrap();
-        pos = match direction {
-            "L" => rotate_left(pos, distance),
-            "R" => rotate_right(pos, distance),
-            _ => panic!("Invalid direction"),
-        };
-        if pos == 0 {
-            zero_count += 1;
-        }
-    }
-    zero_count
+pub fn analyze_password_0x434c49434b(input: &str) -> i16 {
+    input
+        .lines()
+        .fold((50, 0), |(pos, count), line| {
+            let (direction, distance) = line.split_at(1);
+            let mut distance: i16 = distance.parse().unwrap();
+            if direction == "L" {
+                distance *= -1;
+            }
+            let new_pos = pos + distance;
+            (
+                new_pos.rem_euclid(100),
+                count + (new_pos <= 0 && pos != 0) as i16 + (new_pos.signum() * new_pos / 100),
+            )
+        })
+        .1
 }
 
 #[cfg(test)]
@@ -57,21 +36,6 @@ mod tests {
     use super::*;
 
     const EXAMPLE_INPUT: &str = "L68\nL30\nR48\nL5\nR60\nL55\nL1\nL99\nR14\nL82";
-
-    #[test]
-    fn test_rotate_left() {
-        assert_eq!(rotate_left(50, 68), 82);
-        assert_eq!(rotate_left(82, 30), 52);
-        assert_eq!(rotate_left(0, 5), 95);
-        assert_eq!(rotate_left(55, 55), 0);
-    }
-
-    #[test]
-    fn test_rotate_right() {
-        assert_eq!(rotate_right(52, 48), 0);
-        assert_eq!(rotate_right(95, 60), 55);
-        assert_eq!(rotate_right(0, 14), 14);
-    }
 
     #[test]
     fn test_analyze_password() {
