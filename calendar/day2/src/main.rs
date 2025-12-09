@@ -3,6 +3,9 @@ fn main() {
     println!("Testing part one");
     let result = part_one(input);
     println!("Result: {result}");
+    println!("Testing part two");
+    let result2 = part_two(input);
+    println!("Result: {result2}");
 }
 
 fn part_one(input: &str) -> u64 {
@@ -29,6 +32,26 @@ fn part_one(input: &str) -> u64 {
         .sum::<u64>()
 }
 
+fn part_two(input: &str) -> u64 {
+    input
+        .split(',')
+        .map(|range| {
+            let (start, end) = range.trim().split_once("-").unwrap();
+            let start = start.parse::<u64>().unwrap();
+            let end = end.parse::<u64>().unwrap();
+
+            (start..=end)
+                .map(|num| {
+                    let strnum = num.to_string();
+                    let half = strnum.len().div_ceil(2);
+                    (0..half).map(|i| i);
+                    0
+                })
+                .sum::<u64>()
+        })
+        .sum::<u64>()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -40,5 +63,10 @@ mod tests {
     #[test]
     fn test_part_one() {
         assert_eq!(part_one(INPUT), 1227775554);
+    }
+
+    #[test]
+    fn test_part_two() {
+        assert_eq!(part_two(INPUT), 4174379265);
     }
 }
