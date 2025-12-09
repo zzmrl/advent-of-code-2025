@@ -1,9 +1,8 @@
 fn main() {
     let input = include_str!("input");
-    println!("Hello, world!");
     println!("Testing part one");
     let result = part_one(input);
-    println!("Result: {}", result);
+    println!("Result: {result}");
 }
 
 fn part_one(input: &str) -> u64 {
@@ -14,19 +13,18 @@ fn part_one(input: &str) -> u64 {
             let start = start.parse::<u64>().unwrap();
             let end = end.parse::<u64>().unwrap();
 
-            let mut total = 0;
-            for num in start..=end {
-                let strnum = num.to_string();
-                if strnum.len() % 2 != 0 {
-                    continue;
-                }
-                let half = strnum.len() / 2;
-
-                if &strnum[..half] == &strnum[half..] {
-                    total += num;
-                }
-            }
-            total
+            (start..=end)
+                .map(|num| {
+                    let strnum = num.to_string();
+                    if strnum.len() % 2 == 0 {
+                        let half = strnum.len() / 2;
+                        if &strnum[..half] == &strnum[half..] {
+                            return num;
+                        }
+                    }
+                    0
+                })
+                .sum::<u64>()
         })
         .sum::<u64>()
 }
