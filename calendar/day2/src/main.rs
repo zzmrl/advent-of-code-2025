@@ -43,8 +43,13 @@ fn part_two(input: &str) -> u64 {
             (start..=end)
                 .map(|num| {
                     let strnum = num.to_string();
-                    let half = strnum.len().div_ceil(2);
-                    (0..half).map(|i| i);
+                    for size in 1..=(strnum.len() / 2) {
+                        let p = strnum.len() / size;
+                        let seq = &strnum[..size];
+                        if seq.repeat(p) == strnum {
+                            return num;
+                        }
+                    }
                     0
                 })
                 .sum::<u64>()
