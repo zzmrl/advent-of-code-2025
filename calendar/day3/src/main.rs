@@ -3,13 +3,27 @@ fn main() {
     println!("Testing part one");
     let result = part_one(input);
     println!("Result: {result}");
-    println!("Testing part two");
-    let result2 = part_two(input);
-    println!("Result: {result2}");
+    // println!("Testing part two");
+    // let result2 = part_two(input);
+    // println!("Result: {result2}");
 }
 
 fn part_one(input: &str) -> u32 {
-    0
+    input
+        .lines()
+        .map(|line| {
+            let mut highest = String::from("");
+            for (i, c1) in line.chars().enumerate() {
+                for c2 in line.chars().skip(i + 1) {
+                    let num = format!("{c1}{c2}");
+                    if num > highest {
+                        highest = num;
+                    }
+                }
+            }
+            highest.parse::<u32>().unwrap()
+        })
+        .sum()
 }
 
 fn part_two(input: &str) -> u32 {
