@@ -1,5 +1,3 @@
-use std::usize;
-
 fn main() {
     let input = include_str!("input");
     println!("Testing part one");
