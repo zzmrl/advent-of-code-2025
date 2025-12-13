@@ -53,7 +53,7 @@ fn part_one(input: &str) -> u32 {
 }
 
 fn part_two(input: &str) -> u32 {
-    let map: HashMap<(i16, i16), u8> = input
+    let mut map: HashMap<(i16, i16), u8> = input
         .lines()
         .enumerate()
         .flat_map(|(row, line)| {
@@ -69,16 +69,34 @@ fn part_two(input: &str) -> u32 {
         })
         .collect();
 
-    map.iter()
-        .filter(|(_key, value)| **value == 1)
-        .map(|((row, col), _value)| {
+    let mut count = 0;
+    loop {
+        let mut current_count = 0;
+        let mut new_map = map.clone();
+
+        for ((row, col), value) in &map {
+            if *value != 1 {
+                continue;
+            }
             let neighbors: u8 = DELTAS
                 .iter()
                 .filter_map(|(dr, dc)| map.get(&(*row + dr, *col + dc)))
                 .sum();
-            if neighbors < 4 { 1 } else { 0 }
-        })
-        .sum()
+            if neighbors < 4 {
+                new_map.insert((*row, *col), 0);
+                current_count += 1;
+            }
+        }
+
+        map = new_map;
+        count += current_count;
+
+        if current_count == 0 {
+            break;
+        }
+    }
+
+    count
 }
 
 #[cfg(test)]
@@ -105,6 +123,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(EXAMPLE_INPUT);
-        assert_eq!(result, 0);
+        assert_eq!(result, 43);
     }
 }
