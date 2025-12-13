@@ -39,25 +39,46 @@ fn part_one(input: &str) -> u32 {
         .collect();
 
     map.iter()
-        .filter(|(_key, value)| **value == 1)
-        .map(|((row, col), _value)| {
+        .filter_map(|((row, col), value)| {
+            if *value != 1 {
+                return None;
+            }
             let neighbors: u8 = DELTAS
                 .iter()
-                .map(|(dr, dc)| {
-                    if let Some(&neighbor) = map.get(&(*row + dr, *col + dc)) {
-                        neighbor
-                    } else {
-                        0
-                    }
-                })
+                .filter_map(|(dr, dc)| map.get(&(*row + dr, *col + dc)))
                 .sum();
-            if neighbors < 4 { 1 } else { 0 }
+            if neighbors < 4 { Some(1) } else { None }
         })
         .sum()
 }
 
 fn part_two(input: &str) -> u32 {
-    !todo!("Implement part two")
+    let map: HashMap<(i16, i16), u8> = input
+        .lines()
+        .enumerate()
+        .flat_map(|(row, line)| {
+            line.bytes().enumerate().map(move |(col, v)| {
+                let key = (row as i16, col as i16);
+                let value = match v {
+                    b'.' => 0,
+                    b'@' => 1,
+                    _ => panic!("Invalid input"),
+                };
+                (key, value)
+            })
+        })
+        .collect();
+
+    map.iter()
+        .filter(|(_key, value)| **value == 1)
+        .map(|((row, col), _value)| {
+            let neighbors: u8 = DELTAS
+                .iter()
+                .filter_map(|(dr, dc)| map.get(&(*row + dr, *col + dc)))
+                .sum();
+            if neighbors < 4 { 1 } else { 0 }
+        })
+        .sum()
 }
 
 #[cfg(test)]
